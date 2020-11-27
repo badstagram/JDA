@@ -43,6 +43,11 @@ public enum ChannelType
      * A {@link net.dv8tion.jda.api.entities.Category Category}, Guild-Only.
      */
     CATEGORY(4, 2, true),
+
+    /**
+     * A News (Announcement) channel, Guild-Only.
+     */
+    NEWS(5, 0, true),
     /**
      * A {@link net.dv8tion.jda.api.entities.StoreChannel StoreChannel}, Guild-Only.
      */
