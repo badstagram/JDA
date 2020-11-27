@@ -383,7 +383,7 @@ public class ChannelManagerImpl extends ManagerBase<ChannelManager> implements C
         if (shouldUpdate(PARENT))
             frame.put("parent_id", parent);
         if (shouldUpdate(NEWS))
-            frame.put("type", getType() == ChannelType.TEXT ? ChannelType.TEXT.getId() : ChannelType.NEWS.getId());
+            frame.put("type", getType() == ChannelType.TEXT ? ChannelType.NEWS.getId() : ChannelType.TEXT.getId());
         withLock(lock, (lock) ->
         {
             if (shouldUpdate(PERMISSION))
