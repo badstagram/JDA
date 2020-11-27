@@ -31,6 +31,7 @@ import net.dv8tion.jda.internal.requests.restaction.PermOverrideData;
 import net.dv8tion.jda.internal.utils.Checks;
 import net.dv8tion.jda.internal.utils.cache.SnowflakeReference;
 import okhttp3.RequestBody;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nonnull;
@@ -44,7 +45,7 @@ public class ChannelManagerImpl extends ManagerBase<ChannelManager> implements C
     protected String parent;
     protected String topic;
     protected int position;
-    protected boolean nsfw;
+    protected boolean nsfw, news;
     protected int slowmode;
     protected int userlimit;
     protected int bitrate;
@@ -342,6 +343,21 @@ public class ChannelManagerImpl extends ManagerBase<ChannelManager> implements C
         return this;
     }
 
+    @NotNull
+    @Override
+    public ChannelManager setNews(boolean news)
+    {
+        if (getGuild().getFeatures().contains("NEWS"))
+            throw new UnsupportedOperationException("Guild needs the NEWS feature too set a news channel");
+
+        if (getType() != ChannelType.TEXT)
+            throw new UnsupportedOperationException("Can only set news on text channels ");
+
+        set |= NEWS;
+
+        return this;
+    }
+
     @Override
     protected RequestBody finalizeData()
     {
@@ -362,6 +378,8 @@ public class ChannelManagerImpl extends ManagerBase<ChannelManager> implements C
             frame.put("bitrate", bitrate);
         if (shouldUpdate(PARENT))
             frame.put("parent_id", parent);
+        if (shouldUpdate(NEWS))
+            frame.put("type", 5);
         withLock(lock, (lock) ->
         {
             if (shouldUpdate(PERMISSION))
@@ -405,4 +423,6 @@ public class ChannelManagerImpl extends ManagerBase<ChannelManager> implements C
         else
             return ((Member) holder).getUser().getIdLong();
     }
+
+
 }
