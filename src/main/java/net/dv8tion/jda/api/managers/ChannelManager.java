@@ -62,6 +62,8 @@ public interface ChannelManager extends Manager<ChannelManager>
     long PERMISSION = 0x80;
     /** Used to reset the rate-limit per user field */
     long SLOWMODE   = 0x100;
+    /** Used to reset the news field */
+    long NEWS   = 0x418;
 
     /**
      * Resets the fields specified by the provided bit-flag pattern.
@@ -79,6 +81,7 @@ public interface ChannelManager extends Manager<ChannelManager>
      *     <li>{@link #USERLIMIT}</li>
      *     <li>{@link #BITRATE}</li>
      *     <li>{@link #PERMISSION}</li>
+     *     <li>{@link #NEWS}</li>
      * </ul>
      *
      * @param  fields
@@ -104,6 +107,7 @@ public interface ChannelManager extends Manager<ChannelManager>
      *     <li>{@link #USERLIMIT}</li>
      *     <li>{@link #BITRATE}</li>
      *     <li>{@link #PERMISSION}</li>
+     *     <li>{@link #NEWS}</li>
      * </ul>
      *
      * @param  fields
@@ -467,4 +471,23 @@ public interface ChannelManager extends Manager<ChannelManager>
     @Nonnull
     @CheckReturnValue
     ChannelManager setBitrate(int bitrate);
+
+    /**
+     * Sets if the selected  {@link net.dv8tion.jda.api.entities.GuildChannel GuildChannel} should be a News (Announcement) channel
+     * <br><b>This is only available to {@link net.dv8tion.jda.api.entities.TextChannel TextChannels}</b>
+     *
+     * @param  news
+     *         If the selected {@link net.dv8tion.jda.api.entities.GuildChannel GuildChannel} should be a news (announcement) channel.
+     *
+     * @throws UnsupportedOperationException
+     *         If the selected {@link net.dv8tion.jda.api.entities.GuildChannel GuildChannel}'s type is not {@link net.dv8tion.jda.api.entities.ChannelType#TEXT TEXT}
+     *         Or if the {@link net.dv8tion.jda.api.entities.Guild Guild} does not have the {@code NEWS} feature
+     *
+     * @return ChannelManager for chaining convenience
+     *
+     * @see net.dv8tion.jda.api.entities.Guild#getFeatures()
+     */
+    @Nonnull
+    @CheckReturnValue
+    ChannelManager setNews(boolean news);
 }

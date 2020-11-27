@@ -44,7 +44,7 @@ public class ChannelManagerImpl extends ManagerBase<ChannelManager> implements C
     protected String parent;
     protected String topic;
     protected int position;
-    protected boolean nsfw;
+    protected boolean nsfw, news;
     protected int slowmode;
     protected int userlimit;
     protected int bitrate;
@@ -63,7 +63,7 @@ public class ChannelManagerImpl extends ManagerBase<ChannelManager> implements C
     public ChannelManagerImpl(GuildChannel channel)
     {
         super(channel.getJDA(),
-              Route.Channels.MODIFY_CHANNEL.compile(channel.getId()));
+                Route.Channels.MODIFY_CHANNEL.compile(channel.getId()));
         JDA jda = channel.getJDA();
         ChannelType type = channel.getType();
         this.channel = channel;
@@ -207,7 +207,7 @@ public class ChannelManagerImpl extends ManagerBase<ChannelManager> implements C
         Checks.notNull(syncSource, "SyncSource");
         Checks.check(getGuild().equals(syncSource.getGuild()), "Sync only works for channels of same guild");
 
-        if(syncSource.equals(getChannel()))
+        if (syncSource.equals(getChannel()))
             return this;
 
         if (isPermissionChecksEnabled() && !getGuild().getSelfMember().hasPermission(getChannel(), Permission.MANAGE_PERMISSIONS))
@@ -220,12 +220,13 @@ public class ChannelManagerImpl extends ManagerBase<ChannelManager> implements C
 
             //set all current overrides to-be-removed
             getChannel().getPermissionOverrides()
-                .stream()
-                .mapToLong(PermissionOverride::getIdLong)
-                .forEach(overridesRem::add);
+                    .stream()
+                    .mapToLong(PermissionOverride::getIdLong)
+                    .forEach(overridesRem::add);
 
             //re-add all perm-overrides of syncSource
-            syncSource.getPermissionOverrides().forEach(override -> {
+            syncSource.getPermissionOverrides().forEach(override ->
+            {
                 int type = override.isRoleOverride() ? PermOverrideData.ROLE_TYPE : PermOverrideData.MEMBER_TYPE;
                 long id = override.getIdLong();
 
@@ -345,6 +346,21 @@ public class ChannelManagerImpl extends ManagerBase<ChannelManager> implements C
         return this;
     }
 
+    @Nonnull
+    @Override
+    public ChannelManager setNews(boolean news)
+    {
+        if (getGuild().getFeatures().contains("NEWS"))
+            throw new UnsupportedOperationException("Guild needs the NEWS feature too set a news channel");
+
+        if (getType() != ChannelType.TEXT)
+            throw new UnsupportedOperationException("Can only set news on text channels ");
+
+        set |= NEWS;
+
+        return this;
+    }
+
     @Override
     protected RequestBody finalizeData()
     {
@@ -394,7 +410,7 @@ public class ChannelManagerImpl extends ManagerBase<ChannelManager> implements C
         //note: overridesAdd and overridesRem are mutually disjoint
         TLongObjectHashMap<PermOverrideData> data = new TLongObjectHashMap<>(this.overridesAdd);
 
-        AbstractChannelImpl<?,?> impl = (AbstractChannelImpl<?,?>) getChannel();
+        AbstractChannelImpl<?, ?> impl = (AbstractChannelImpl<?, ?>) getChannel();
         impl.getOverrideMap().forEachEntry((id, override) ->
         {
             //removed by not adding them here, this data set overrides the existing one
