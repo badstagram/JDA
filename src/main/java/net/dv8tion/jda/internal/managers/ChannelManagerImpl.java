@@ -351,11 +351,12 @@ public class ChannelManagerImpl extends ManagerBase<ChannelManager> implements C
     public ChannelManager setNews(boolean news)
     {
         if (!getGuild().getFeatures().contains("NEWS"))
-            throw new UnsupportedOperationException("Guild needs the NEWS feature too set a news channel");
+            throw new UnsupportedOperationException("Guild needs the NEWS feature to set a news channel");
 
         if (getType() != ChannelType.TEXT)
             throw new UnsupportedOperationException("Can only set news on text channels ");
 
+        this.news = news;
         set |= NEWS;
 
         return this;
