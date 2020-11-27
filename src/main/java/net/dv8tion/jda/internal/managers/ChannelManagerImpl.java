@@ -381,6 +381,8 @@ public class ChannelManagerImpl extends ManagerBase<ChannelManager> implements C
             frame.put("bitrate", bitrate);
         if (shouldUpdate(PARENT))
             frame.put("parent_id", parent);
+        if (shouldUpdate(NEWS))
+            frame.put("type", 5);
         withLock(lock, (lock) ->
         {
             if (shouldUpdate(PERMISSION))
