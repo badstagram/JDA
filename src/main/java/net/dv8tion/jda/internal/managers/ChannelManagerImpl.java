@@ -350,7 +350,7 @@ public class ChannelManagerImpl extends ManagerBase<ChannelManager> implements C
     @Override
     public ChannelManager setNews(boolean news)
     {
-        if (getGuild().getFeatures().contains("NEWS"))
+        if (!getGuild().getFeatures().contains("NEWS"))
             throw new UnsupportedOperationException("Guild needs the NEWS feature too set a news channel");
 
         if (getType() != ChannelType.TEXT)
